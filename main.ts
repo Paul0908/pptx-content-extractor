@@ -7,12 +7,17 @@ export interface ParsedContent {
   content: unknown;
 }
 
+/**
+ * @property content: { id: string; type: string; text: string[] }[] - id type and text of slide elements
+ * @property mediaNames: string[] - names of media Files
+ */
 export interface ParsedSlide extends ParsedContent {
-  content: { id: string; type: string; text: string[] }[]
+  content: { id: string; type: string; text: string[] }[],
+  mediaNames: string[]
 }
 
 /**
- * @property content is base64 encoded
+ * @property content: string is base64 encoded
  */
 export interface ParsedMedia extends ParsedContent {
   content: string;
@@ -107,13 +112,33 @@ async function parseMediaContent(media: JSZipObject): Promise<ParsedMedia> {
   }
 }
 
+function getMediaIndexesInSlide(parsedSlide: string, search: string = 'media/') {
+  const indexes = [];
+  let index = parsedSlide.indexOf(search);
+  while (index !== -1) {
+    indexes.push(index);
+    index = parsedSlide.indexOf(search, index + 1);
+  }
+  return indexes; 
+}
+
+function getMediaReferencesInSlide(parsedSlide: string, mediaIndex: number[], startOffset: number = 6){
+  return mediaIndex.map(i => {
+    const startIndex = i + startOffset;
+    const endIndex = parsedSlide.indexOf('"', startIndex);
+    return parsedSlide.slice(startIndex, endIndex);
+  });
+}
 
 async function parseSlideContent(slide: JSZipObject): Promise<ParsedSlide> {
   const xml = await slide.async('string');
   const parsed = await parseStringPromise(xml);
-
+  const parsedStringified = JSON.stringify(parsed);
+ 
   const results: ParsedSlide["content"] = [];
   const shapes = parsed['p:sld']?.['p:cSld']?.[0]?.['p:spTree']?.[0]?.['p:sp'];
+
+  const mediaNames = getMediaReferencesInSlide(parsedStringified, getMediaIndexesInSlide(parsedStringified));
 
   if (shapes) {
     shapes.forEach((shape: any) => {
@@ -135,7 +160,8 @@ async function parseSlideContent(slide: JSZipObject): Promise<ParsedSlide> {
 
   return {
     name: slide.name,
-    content: results
+    content: results,
+    mediaNames
   }
 }
 

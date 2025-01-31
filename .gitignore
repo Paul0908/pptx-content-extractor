@@ -1,2 +1,6 @@
-/node_modules
+node_modules
 package-lock.json
+build/
+build/main.js
+build/main.d.ts.map
+build/main.d.ts

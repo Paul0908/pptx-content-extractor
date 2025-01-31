@@ -152,6 +152,7 @@ export interface ParsedPowerPoint {
 ```typescript
 export interface ParsedSlide extends ParsedContent {
   content: { id: string; type: string; text: string[] }[];
+  mediaNames: string[] // names of media file e.g. ['image23.jpeg']
 }
 ```
 

@@ -99,8 +99,24 @@ function parseMediaContent(media) {
         const mediaType = fileName.split('.').pop() || 'unknown';
         return {
             name: media.name,
-            content: `data:image/${mediaType};base64,${binaries}`
+            content: `data:image/${mediaType};base64,${binaries}`,
         };
+    });
+}
+function getMediaIndexesInSlide(parsedSlide, search = 'media/') {
+    const indexes = [];
+    let index = parsedSlide.indexOf(search);
+    while (index !== -1) {
+        indexes.push(index);
+        index = parsedSlide.indexOf(search, index + 1);
+    }
+    return indexes;
+}
+function getMediaReferencesInSlide(parsedSlide, mediaIndex, startOffset = 6) {
+    return mediaIndex.map(i => {
+        const startIndex = i + startOffset;
+        const endIndex = parsedSlide.indexOf('"', startIndex);
+        return parsedSlide.slice(startIndex, endIndex);
     });
 }
 function parseSlideContent(slide) {
@@ -108,8 +124,10 @@ function parseSlideContent(slide) {
         var _a, _b, _c, _d, _e;
         const xml = yield slide.async('string');
         const parsed = yield (0, xml2js_1.parseStringPromise)(xml);
+        const parsedStringified = JSON.stringify(parsed);
         const results = [];
         const shapes = (_e = (_d = (_c = (_b = (_a = parsed['p:sld']) === null || _a === void 0 ? void 0 : _a['p:cSld']) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c['p:spTree']) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e['p:sp'];
+        const mediaNames = getMediaReferencesInSlide(parsedStringified, getMediaIndexesInSlide(parsedStringified));
         if (shapes) {
             shapes.forEach((shape) => {
                 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -130,7 +148,8 @@ function parseSlideContent(slide) {
         }
         return {
             name: slide.name,
-            content: results
+            content: results,
+            mediaNames
         };
     });
 }

@@ -2,15 +2,20 @@ export interface ParsedContent {
     name: string;
     content: unknown;
 }
+/**
+ * @property content: { id: string; type: string; text: string[] }[] - id type and text of slide elements
+ * @property mediaNames: string[] - names of media Files
+ */
 export interface ParsedSlide extends ParsedContent {
     content: {
         id: string;
         type: string;
         text: string[];
     }[];
+    mediaNames: string[];
 }
 /**
- * @property content is base64 encoded
+ * @property content: string is base64 encoded
  */
 export interface ParsedMedia extends ParsedContent {
     content: string;
