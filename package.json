@@ -1,0 +1,40 @@
+{
+  "name": "pptx-content-extractor",
+  "version": "1.0.0",
+  "description": "A Node.js library for extracting slides, notes, and media from PowerPoint (.pptx) files.",
+  "main": "build/main.js",
+  "type": "commonjs",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "pptx",
+    "parse",
+    "extract",
+    "PowerPoint",
+    "slides",
+    "notes",
+    "media"
+  ],
+  "author": "Paul0908",
+  "homepage": "https://github.com/Paul0908/pptx-content-extractor#readme",
+  "bugs": {
+    "url": "https://github.com/Paul0908/pptx-content-extractor/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "xml2js": "^0.6.2"
+  },
+  "repository": {
+    "url": "https://github.com/Paul0908/pptx-content-extractor",
+    "type": "github"
+  },
+  "devDependencies": {
+    "@types/jszip": "^3.4.1",
+    "@types/xml2js": "^0.4.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
